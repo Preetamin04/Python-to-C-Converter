@@ -1,42 +1,56 @@
-# Master Test Case for Python-to-C Converter
+# Ultimate Master Test Case for Python-to-C Converter
+
+def square(x):
+    return x * x
+
+def calculate_complex_sum(a, b):
+    # Function calling another function
+    s1 = square(a)
+    s2 = square(b)
+    return s1 + s2
 
 def factorial(n):
     if n == 0 or n == 1:
         return 1
-    else:
-        return n * factorial(n - 1)
+    return n * factorial(n - 1)
 
-def check_even_odd(num):
-    if num % 2 == 0:
-        return "Even"
-    else:
-        return "Odd"
+def outer_function(x):
+    def inner_function(y):
+        return y * 10
+    
+    res = inner_function(x) + 5
+    return res
 
 # Main Logic
-print("--- Master Test Case ---")
+print("--- Ultimate Master Test ---")
 
-# 1. User Input and Types
-val = int(input("Enter a number for factorial: "))
-res = factorial(val)
-print("Factorial is:", res)
+# 1. Math and Floor Division
+a = 15
+b = 4
+floor_res = a // b
+power_res = 2 ** 5
+print("Floor division of 15 // 4 is:", floor_res)
+print("2 power 5 is:", power_res)
 
-# 2. Lists and Loops
-numbers = [1, 2, 3, 4, 5]
-total = 0
-for x in numbers:
-    total += x
-print("Sum of list:", total)
+# 2. Boolean Logic
+x = 10
+y = 20
+if x < y and not x == 0 or y == 100:
+    print("Complex boolean logic passed")
 
-# 3. Nested Conditionals and Math
-limit = 10
-for i in range(1, limit):
-    if i % 3 == 0:
-        print(i, "is divisible by 3")
-    elif i % 2 == 0:
-        print(i, "is even")
-    else:
-        pass
+# 3. Functions calling Functions
+val = calculate_complex_sum(3, 4)
+print("Sum of squares (3^2 + 4^2):", val)
 
-# 4. Complex Math
-power_val = 2 ** 3
-print("2 power 3 is:", power_val)
+# 4. Nested Loops (Multiplication Table snippet)
+print("Multiplication Table (2x2):")
+for i in range(1, 3):
+    for j in range(1, 3):
+        res = i * j
+        print(i, "*", j, "=", res)
+
+# 5. List Iteration
+items = [10, 20, 30]
+for item in items:
+    if item > 15:
+        print("Item", item, "is large")
