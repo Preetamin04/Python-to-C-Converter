@@ -7,6 +7,9 @@ def transform_to_c(lines, symbol_table):
     # Stores translated code for the main function
     main_code = []
 
+    # Stores function prototypes
+    prototypes = []
+
     # Tracks indentation levels for block management
     indent_stack = [0]
 
@@ -24,6 +27,7 @@ def transform_to_c(lines, symbol_table):
 
     # Tracks function metadata
     current_function_index = None
+    current_prototype_index = None
     has_return_statement = False
 
     #COMMENT FLAGS
@@ -155,11 +159,18 @@ def transform_to_c(lines, symbol_table):
                         functions[current_function_index] = functions[current_function_index].replace(
                             "int", "void", 1
                         )
+                        prototypes[current_prototype_index] = prototypes[current_prototype_index].replace(
+                            "int", "void", 1
+                        )
                     elif function_return_type == "float":
                         functions[current_function_index] = functions[current_function_index].replace(
                             "int", "float", 1
                         )
+                        prototypes[current_prototype_index] = prototypes[current_prototype_index].replace(
+                            "int", "float", 1
+                        )
                     current_function_index = None
+                    current_prototype_index = None
 
                 functions.append(closing)
             else:
@@ -189,10 +200,13 @@ def transform_to_c(lines, symbol_table):
                         param_list.append(f"{p_type} {p}")
 
             current_function_index = len(functions)
+            current_prototype_index = len(prototypes)
             has_return_statement = False
             function_return_type = "int"
 
-            functions.append(f"int {name}({', '.join(param_list)}) {{")
+            sig = f"int {name}({', '.join(param_list)})"
+            functions.append(f"{sig} {{")
+            prototypes.append(f"{sig};")
             indent_stack.append(indent + 4)
 
         # RETURN STATEMENT
@@ -529,8 +543,25 @@ def transform_to_c(lines, symbol_table):
         closing = "    " * len(indent_stack) + "}"
 
         if inside_function:
+            if current_function_index is not None:
+                if not has_return_statement:
+                    functions[current_function_index] = functions[current_function_index].replace(
+                        "int", "void", 1
+                    )
+                    prototypes[current_prototype_index] = prototypes[current_prototype_index].replace(
+                        "int", "void", 1
+                    )
+                elif function_return_type == "float":
+                    functions[current_function_index] = functions[current_function_index].replace(
+                        "int", "float", 1
+                    )
+                    prototypes[current_prototype_index] = prototypes[current_prototype_index].replace(
+                        "int", "float", 1
+                    )
+                current_function_index = None
+                current_prototype_index = None
             functions.append(closing)
         else:
             main_code.append(closing)
 
-    return functions, main_code, include_math
+    return prototypes, functions, main_code, include_math

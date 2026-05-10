@@ -1,4 +1,4 @@
-def generate_c_code(functions, main_code, include_math=False):
+def generate_c_code(prototypes, functions, main_code, include_math=False):
 
     code = []
     code.append("#include <stdio.h>")
@@ -8,11 +8,11 @@ def generate_c_code(functions, main_code, include_math=False):
 
     code.append("")
 
-    # FUNCTIONS FIRST
-    for line in functions:
-        code.append(line)
-
-    code.append("")
+    # PROTOTYPES
+    if prototypes:
+        for p in prototypes:
+            code.append(p)
+        code.append("")
 
     #  MAIN FUNCTION
     code.append("int main() {")
@@ -22,5 +22,11 @@ def generate_c_code(functions, main_code, include_math=False):
 
     code.append("    return 0;")
     code.append("}")
+
+    code.append("")
+
+    # FUNCTIONS (DEFINED AFTER MAIN)
+    for line in functions:
+        code.append(line)
 
     return code
