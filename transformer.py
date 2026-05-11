@@ -42,7 +42,7 @@ def transform_to_c(lines, symbol_table):
     def is_float_expr(expr):
 
         # Floor division result is integer
-        if "floor(" in expr:
+        if "(int)" in expr:
             return False
 
         return "/" in expr or "." in expr
@@ -74,9 +74,7 @@ def transform_to_c(lines, symbol_table):
             a = match.group(1).strip()
             b = match.group(2).strip()
 
-            include_math = True
-
-            return f"(int)floor((double)({a}) / ({b}))"
+            return f"(int)(({a}) / ({b}))"
 
         return re.sub(r'([^/\s]+)\s*//\s*([^/\s]+)', repl, expr)
 
@@ -84,7 +82,7 @@ def transform_to_c(lines, symbol_table):
     def handle_true_div(expr):
 
         # Skip if already converted floor division
-        if "floor(" in expr:
+        if "(int)" in expr:
             return expr
 
         def repl(match):
