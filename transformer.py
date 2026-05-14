@@ -30,24 +30,22 @@ def transform_to_c(lines, symbol_table):
     current_prototype_index = None
     has_return_statement = False
 
-    #COMMENT FLAGS
+    #COMMENT
     in_multiline_comment = False
 
-    # Helper Function: Get datatype from symbol table
+    # Helper: Get datatype from symbol table
     def get_type(var_name):
         if var_name in symbol_table and "datatype" in symbol_table[var_name]:
             return symbol_table[var_name]["datatype"]
         return "int"
 
     def is_float_expr(expr):
-
-        # Floor division result is integer
-        if "(int)" in expr:
+        if "(int)" in expr: # Floor division result is integer
             return False
 
         return "/" in expr or "." in expr
 
-    # Helper Function: Infer datatype for lists and tuples
+    # Helper: Infer datatype for lists and tuples
     def infer_array_type(elements):
         cleaned = [e.strip() for e in elements if e.strip()]
 
@@ -66,7 +64,7 @@ def transform_to_c(lines, symbol_table):
         else:
             return "int"
 
-    # FLOOR DIVISION HANDLER
+    # Floor Division
     def handle_floor_div(expr):
         nonlocal include_math
 
@@ -78,10 +76,8 @@ def transform_to_c(lines, symbol_table):
 
         return re.sub(r'([^/\s]+)\s*//\s*([^/\s]+)', repl, expr)
 
-    # TRUE DIVISION HANDLER
+    # Integer Divsion
     def handle_true_div(expr):
-
-        # Skip if already converted floor division
         if "(int)" in expr:
             return expr
 
@@ -99,6 +95,7 @@ def transform_to_c(lines, symbol_table):
 
         return re.sub(r'(\w+)\s*/\s*(\w+)', repl, expr)
 
+    # Boolean Expression
     def handle_boolean_literals(expr):
         expr = re.sub(r'\bTrue\b', '1', expr)
         expr = re.sub(r'\bFalse\b', '0', expr)
@@ -108,9 +105,8 @@ def transform_to_c(lines, symbol_table):
     for line in lines:
         stripped = line.strip()
 
-        # ================= COMMENT HANDLING =================
-
-        # MULTI-LINE COMMENT START/END
+        # Comment Handling 
+        # MULTI-LINE COMMENT
         if stripped.startswith(("'''", '"""')):
             if not in_multiline_comment:
                 in_multiline_comment = True
