@@ -59,38 +59,14 @@ No manual work. No knowledge of C required. Just click **Convert**.
 
 ---
 
-## 📁 Project Structure
-
-```
-Python_to_C_Converter/
-│
-├── app.py              ← 🌐 Web interface (the page you see in the browser)
-├── main.py             ← 🔧 Compiler engine runner (also works on command line)
-├── transformer.py      ← 🧠 Core brain — converts Python lines into C lines
-├── generator.py        ← 🏗️  Assembler — puts all C pieces into a final file
-│
-├── test codes/         ← 🧪 Sample Python programs to try
-│   ├── even_odd.py
-│   ├── prime_no_check.py
-│   ├── prime_no_n.py
-│   ├── integer_division.py
-│   ├── test_multi_param.py
-│   ├── test_void.py
-│   └── master_test.py
-│
-└── outputs/            ← 📂 Generated .c files are saved here automatically
-    ├── manual_input.c
-    └── test_multi_param.c
-```
-
 ### What each file does in plain English
 
 | File | Think of it as... | What it actually does |
 |---|---|---|
-| `app.py` | The **front door** | Runs the website you interact with. Has the upload button, text box, and Convert button. |
-| `main.py` | The **manager** | Calls transformer + generator in the right order. Also lets you run from the command line. |
-| `transformer.py` | The **translator brain** | Reads each Python line and rewrites it in C syntax. The most complex file. |
-| `generator.py` | The **assembler** | Takes all the translated pieces and glues them into one valid C file with the right headers. |
+| `app.py` | Runs the website you interact with. Has the upload button, text box, and Convert button. |
+| `main.py` | Calls transformer + generator in the right order. Also lets you run from the command line. |
+| `transformer.py` | Reads each Python line and rewrites it in C syntax. The most complex file. |
+| `generator.py` | Takes all the translated pieces and glues them into one valid C file with the right headers. |
 
 ---
 
