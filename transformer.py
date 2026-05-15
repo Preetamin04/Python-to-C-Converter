@@ -15,6 +15,9 @@ def transform_to_c(lines, symbol_table):
 
     # Flag to include math.h if power operator (**) is used
     include_math = False
+    
+    # Flag to include string.h
+    include_string = False
 
     # Indicates whether we are inside a function definition
     inside_function = False
@@ -101,6 +104,40 @@ def transform_to_c(lines, symbol_table):
         expr = re.sub(r'\bFalse\b', '0', expr)
         return expr
 
+    # POWER HANDLER
+    def handle_power(expr):
+        nonlocal include_math
+        if "**" in expr:
+            include_math = True
+            def repl(match):
+                a = match.group(1).strip()
+                b = match.group(2).strip()
+                return f"pow({a}, {b})"
+            return re.sub(r'([A-Za-z0-9_.]+)\s*\*\*\s*([A-Za-z0-9_.]+)', repl, expr)
+        return expr
+
+    # MATH AND STRING FUNCTIONS HANDLER
+    def handle_math_and_string_functions(expr):
+        nonlocal include_math, include_string
+        
+        if "math." in expr:
+            include_math = True
+            expr = expr.replace("math.", "")
+            
+        math_funcs = ["sin(", "cos(", "tan(", "sqrt(", "pow(", "log(", "exp("]
+        if any(f in expr for f in math_funcs):
+            include_math = True
+            
+        string_funcs = ["strlen(", "strcpy(", "strcat(", "strcmp("]
+        if any(f in expr for f in string_funcs):
+            include_string = True
+            
+        if "len(" in expr:
+            include_string = True
+            expr = re.sub(r'\blen\(', 'strlen(', expr)
+            
+        return expr
+
     # Main Transformation Loop
     for line in lines:
         stripped = line.strip()
@@ -137,6 +174,14 @@ def transform_to_c(lines, symbol_table):
 
         # Skip empty lines
         if not stripped:
+            continue
+
+        # ================= IMPORT HANDLING =================
+        if stripped.startswith("import ") or stripped.startswith("from "):
+            if "math" in stripped:
+                include_math = True
+            if "string" in stripped:
+                include_string = True
             continue
 
         # Calculate indentation level
@@ -229,6 +274,8 @@ def transform_to_c(lines, symbol_table):
             # Handle operators only on RHS
             rhs = handle_floor_div(rhs)
             rhs = handle_true_div(rhs)
+            rhs = handle_power(rhs)
+            rhs = handle_math_and_string_functions(rhs)
             rhs = handle_boolean_literals(rhs)
 
             dtype = get_type(var)
@@ -496,6 +543,8 @@ def transform_to_c(lines, symbol_table):
             # Handle operators only on RHS
             rhs = handle_floor_div(rhs)
             rhs = handle_true_div(rhs)
+            rhs = handle_power(rhs)
+            rhs = handle_math_and_string_functions(rhs)
             rhs = handle_boolean_literals(rhs)
 
             dtype = get_type(var)
@@ -558,4 +607,4 @@ def transform_to_c(lines, symbol_table):
         else:
             main_code.append(closing)
 
-    return prototypes, functions, main_code, include_math
+    return prototypes, functions, main_code, include_math, include_string

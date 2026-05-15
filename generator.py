@@ -1,10 +1,13 @@
-def generate_c_code(prototypes, functions, main_code, include_math=False):
+def generate_c_code(prototypes, functions, main_code, include_math=False, include_string=False):
 
     code = []
     code.append("#include <stdio.h>")
 
     if include_math:
         code.append("#include <math.h>")
+        
+    if include_string:
+        code.append("#include <string.h>")
 
     code.append("")
 

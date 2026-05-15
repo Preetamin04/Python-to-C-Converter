@@ -1,4 +1,7 @@
 import streamlit as st
+
+st.set_page_config(layout="wide", page_title="Python to C Converter")
+
 from main import run_compiler
 
 # Hide menu

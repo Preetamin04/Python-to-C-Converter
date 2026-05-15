@@ -7,8 +7,8 @@ from generator import generate_c_code
 
 def compile_python_to_c(python_code):
     lines = python_code.splitlines()
-    prototypes, functions, main_code, include_math = transform_to_c(lines, {})
-    c_lines = generate_c_code(prototypes, functions, main_code, include_math)
+    prototypes, functions, main_code, include_math, include_string = transform_to_c(lines, {})
+    c_lines = generate_c_code(prototypes, functions, main_code, include_math, include_string)
     return "\n".join(c_lines)
 
 
